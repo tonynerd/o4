@@ -1,0 +1,34 @@
+<svg width="117" height="123" viewBox="0 0 117 123" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_695_85" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="17" y="22" width="48" height="50">
+<path d="M17.6433 22.8235H64.2605V71.8313H17.6433V22.8235Z" fill="white"/>
+</mask>
+<g mask="url(#mask0_695_85)">
+<mask id="mask1_695_85" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="17" y="22" width="48" height="50">
+<path d="M40.9805 22.8235C28.0919 22.8235 17.6433 33.808 17.6433 47.3574C17.6433 60.9081 28.0919 71.8914 40.9805 71.8914C53.8702 71.8914 64.3176 60.9081 64.3176 47.3574C64.3176 33.808 53.8702 22.8235 40.9805 22.8235Z" fill="white"/>
+</mask>
+<g mask="url(#mask1_695_85)">
+<path d="M40.9805 22.8235C28.092 22.8235 17.6433 33.808 17.6433 47.3574C17.6433 60.9081 28.092 71.8914 40.9805 71.8914C53.8702 71.8914 64.3176 60.9081 64.3176 47.3574C64.3176 33.808 53.8702 22.8235 40.9805 22.8235Z" stroke="white" stroke-width="8"/>
+</g>
+</g>
+<mask id="mask2_695_85" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="60" y="64" width="31" height="27">
+<path d="M60.9375 64.3828H90.7969V90.9688H60.9375V64.3828Z" fill="white"/>
+</mask>
+<g mask="url(#mask2_695_85)">
+<mask id="mask3_695_85" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="58" y="61" width="36" height="34">
+<path d="M65.7077 61.5L93.5426 84.1371L86.2718 94.018L58.4369 71.3809L65.7077 61.5Z" fill="white"/>
+</mask>
+<g mask="url(#mask3_695_85)">
+<mask id="mask4_695_85" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="58" y="61" width="36" height="34">
+<path d="M65.7066 61.5L93.4689 84.077L86.0873 94.1093L58.3251 71.5335L65.7066 61.5Z" fill="white"/>
+</mask>
+<g mask="url(#mask4_695_85)">
+<mask id="mask5_695_85" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="61" y="64" width="30" height="27">
+<path d="M86.529 78.4328C90.3614 81.5496 91.8562 86.2692 89.8651 88.9743C87.8751 91.6794 83.1548 91.3454 79.3212 88.2273L65.4401 76.9388C61.6077 73.822 60.114 69.1024 62.104 66.3973C64.094 63.6934 68.8142 64.0275 72.6478 67.1443L86.529 78.4328Z" fill="white"/>
+</mask>
+<g mask="url(#mask5_695_85)">
+<path d="M86.5289 78.4328C90.3613 81.5496 91.8561 86.2692 89.8649 88.9743C87.875 91.6795 83.1547 91.3454 79.3211 88.2273L65.44 76.9388C61.6076 73.822 60.1139 69.1024 62.1039 66.3973C64.0939 63.6934 68.8141 64.0275 72.6477 67.1442L86.5289 78.4328Z" stroke="white" stroke-width="8"/>
+</g>
+</g>
+</g>
+</g>
+</svg>

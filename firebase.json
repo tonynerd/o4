@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "public": "www",
+    "site": "onetvplus4",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

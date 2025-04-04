@@ -1,0 +1,102 @@
+<ion-header *ngIf="!isPlayerVisible">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-img src="assets/icon/logo.svg" alt="OneTV Logo"></ion-img>
+    </ion-buttons>
+
+    <ion-segment [(ngModel)]="selectedCategory" (ionChange)="onCategoryChange($event)" mode="md">
+      <ion-segment-button *ngFor="let cat of categories" [value]="cat.id">
+        <ion-icon [src]="'assets/icon/' + cat.icon"></ion-icon>
+        <ion-label>{{cat.name}}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <ion-buttons slot="end">
+      <ion-searchbar 
+        (ionInput)="searchChannels($event)" 
+        placeholder="Buscar"
+        [animated]="true">
+      </ion-searchbar>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [scrollY]="true">
+  <!-- Player Container sempre presente (ele cobre a tela quando visível) -->
+  <div class="player-container" [class.visible]="isPlayerVisible">
+    <video #player controls playsinline webkit-playsinline></video>
+    <ion-button (click)="closePlayer()" class="close-button">
+      <ion-icon name="close-circle-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Conteúdo principal só exibe se o player NÃO estiver visível -->
+  <div *ngIf="!isPlayerVisible">
+    <!-- Banners Dinâmicos -->
+    <div class="banner-container">
+      <img *ngIf="selectedCategory === 'live'" 
+           src="assets/icon/live-banner.png" 
+           alt="Banner Principal" 
+           class="banner-image">
+      
+      <!-- Banner de Esportes -->
+      <img *ngIf="selectedCategory === 'sports'" 
+           src="assets/icon/esporte-banner.png" 
+           alt="Banner Esportes" 
+           class="banner-image">
+
+      <!-- Banner Filmes -->
+      <img *ngIf="selectedCategory === 'movies'" 
+           src="assets/icon/banner.png" 
+           alt="Banner Filmes" 
+           class="banner-image">
+
+      <!-- Banner Séries -->
+      <img *ngIf="selectedCategory === 'series'" 
+           src="assets/icon/series-banner.png" 
+           alt="Banner Séries" 
+           class="banner-image">
+
+      <!-- Banner BBB 25 -->
+      <img *ngIf="selectedCategory === 'bbb'" 
+           src="assets/icon/bbb-banner.png" 
+           alt="Banner BBB 25" 
+           class="banner-image">
+    </div>
+
+    <div class="content-wrapper">
+      <!-- Estados de Loading e Erro -->
+      <div *ngIf="isLoading" class="loading-container">
+        <ion-spinner></ion-spinner>
+        <p>Carregando conteúdo...</p>
+      </div>
+
+      <div *ngIf="error" class="error-container">
+        <p>{{ error }}</p>
+        <ion-button (click)="ngOnInit()">Tentar novamente</ion-button>
+      </div>
+
+      <!-- Conteúdo Principal -->
+      <div class="groups-container" *ngIf="!isLoading && !error">
+        <div *ngFor="let group of groupedContent; trackBy: trackGroupBy" class="group-wrapper">
+          <ion-item-divider>
+            <ion-label>{{group.name}}</ion-label>
+          </ion-item-divider>
+        
+          <div class="scroll-container" (scroll)="onGroupScroll($event, group.name)">
+            <div class="content-row">
+              <ion-card *ngFor="let content of group.items" class="content-card" (click)="playVideo(content)">
+                <div class="thumbnail-wrapper">
+                  <img optimizeImage [imageUrl]="content.logo" [alt]="content.name" loading="lazy">
+                </div>
+                <ion-card-header>
+                  <ion-card-title>{{content.name}}</ion-card-title>
+                </ion-card-header>
+              </ion-card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
