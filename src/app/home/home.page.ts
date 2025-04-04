@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Channel } from '../interfaces/channel.interface';
 import { ChannelService } from '../services/channel.service';
 import Hls from 'hls.js';
+import { inject } from "@vercel/analytics";
 import { ChannelGroup } from '../interfaces/channel-group.interface';
 import { OptimizeImageDirective } from '../directives/optimize-image.directive';
 
