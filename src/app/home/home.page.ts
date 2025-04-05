@@ -21,6 +21,8 @@ import { OptimizeImageDirective } from '../directives/optimize-image.directive';
     OptimizeImageDirective
   ],
 })
+
+
 export class HomePage implements OnInit, OnDestroy {
   @ViewChild('player') playerRef!: ElementRef;
   @ViewChildren('scrollRow') scrollRows!: QueryList<ElementRef>;
@@ -65,6 +67,7 @@ export class HomePage implements OnInit, OnDestroy {
     private changeDetectorRef: ChangeDetectorRef
   ) {}
 
+  
   async ngOnInit() {
     try {
       this.isLoading = true;
@@ -503,4 +506,4 @@ private handlePlaybackError(error: Error | DOMException): void {
   trackGroupBy(index: number, group: ChannelGroup): string {
     return group.name;
   }
-}
+}inject();
