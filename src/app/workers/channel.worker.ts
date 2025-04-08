@@ -52,16 +52,17 @@ function parseM3UBatch(lines: string[]): Channel[] {
     const trimmedLine = line.trim();
 
     if (trimmedLine.startsWith('#EXTINF:')) {
-      const nameMatch = trimmedLine.match(/,(.*)$/);
       const groupMatch = trimmedLine.match(/group-title="([^"]*)"/);
       const logoMatch = trimmedLine.match(/tvg-logo="([^"]*)"/);
+      const nameMatch = trimmedLine.match(/,(.*)$/);
 
+      // Exemplo no channel.worker.ts
       currentChannel = {
         name: nameMatch ? nameMatch[1].trim() : 'Sem nome',
-        group: groupMatch ? groupMatch[1] : 'Outros',
+        group: groupMatch ? groupMatch[1].trim() : 'Outros',
         logo: logoMatch ? logoMatch[1] : 'assets/images/default-thumb.jpg',
         type: determineChannelType(groupMatch ? groupMatch[1] : ''),
-        isLive: true
+        isLive: false
       };
     } else if (trimmedLine.startsWith('http')) {
       if (currentChannel.name) {
@@ -79,6 +80,9 @@ function parseM3UBatch(lines: string[]): Channel[] {
 
 function determineChannelType(group: string): 'live' | 'vod' {
   const lowerGroup = group.toLowerCase();
-  if (lowerGroup.includes('filme') || lowerGroup.includes('series')) return 'vod';
+  if (lowerGroup.includes('filmes') || lowerGroup.includes('series') || 
+      lowerGroup.includes('séries')) {
+    return 'vod';
+  }
   return 'live';
 }

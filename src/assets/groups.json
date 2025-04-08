@@ -1,0 +1,584 @@
+{
+  "categorias": [
+    {
+      "id": 1,
+      "group": "de nossos talentos nacionais"
+    },
+    {
+      "id": 2,
+      "group": "Pra chorar no banho"
+    },
+    {
+      "id": 3,
+      "group": "De arrepiar até o último fio"
+    },
+    {
+      "id": 4,
+      "group": "Pra rir até cansar"
+    },
+    {
+      "id": 5,
+      "group": "Emoção à flor da pele"
+    },
+    {
+      "id": 6,
+      "group": "Tensão do começo ao fim"
+    },
+    {
+      "id": 7,
+      "group": "Amores (im)possíveis"
+    },
+    {
+      "id": 8,
+      "group": "Só tapa na cara"
+    },
+    {
+      "id": 9,
+      "group": "Suspense dos bons"
+    },
+    {
+      "id": 10,
+      "group": "Plot twist atrás de plot twist"
+    },
+    {
+      "id": 11,
+      "group": "Chororô liberado"
+    },
+    {
+      "id": 12,
+      "group": "Doce e agridoce"
+    },
+    {
+      "id": 13,
+      "group": "Reviravoltas de cair o queixo"
+    },
+    {
+      "id": 14,
+      "group": "Uma montanha-russa de emoções"
+    },
+    {
+      "id": 15,
+      "group": "Quando tudo dá errado"
+    },
+    {
+      "id": 16,
+      "group": "Riso garantido ou seu tempo de volta"
+    },
+    {
+      "id": 17,
+      "group": "Inspirador até a alma"
+    },
+    {
+      "id": 18,
+      "group": "Mistérios sem solução"
+    },
+    {
+      "id": 19,
+      "group": "Amor bandido"
+    },
+    {
+      "id": 20,
+      "group": "Mais drama que novela mexicana"
+    },
+    {
+      "id": 21,
+      "group": "Tiro, porrada e bomba"
+    },
+    {
+      "id": 22,
+      "group": "Fugitivos e foras da lei"
+    },
+    {
+      "id": 23,
+      "group": "Ação sem freio"
+    },
+    {
+      "id": 24,
+      "group": "Crime organizado"
+    },
+    {
+      "id": 25,
+      "group": "Sangue frio e mente afiada"
+    },
+    {
+      "id": 26,
+      "group": "Correria, adrenalina e caos"
+    },
+    {
+      "id": 27,
+      "group": "Policiais e bandidos"
+    },
+    {
+      "id": 28,
+      "group": "Justiça pelas próprias mãos"
+    },
+    {
+      "id": 29,
+      "group": "Operações secretas"
+    },
+    {
+      "id": 30,
+      "group": "Clima de investigação no ar"
+    },
+    {
+      "id": 31,
+      "group": "Conspiração revelada"
+    },
+    {
+      "id": 32,
+      "group": "Detetives e enigmas"
+    },
+    {
+      "id": 33,
+      "group": "Planos infalíveis (ou quase)"
+    },
+    {
+      "id": 34,
+      "group": "Vingança servida gelada"
+    },
+    {
+      "id": 35,
+      "group": "Ninguém é confiável"
+    },
+    {
+      "id": 36,
+      "group": "Mais bala que diálogo"
+    },
+    {
+      "id": 37,
+      "group": "Caçada implacável"
+    },
+    {
+      "id": 38,
+      "group": "Golpes e assaltos geniais"
+    },
+    {
+      "id": 39,
+      "group": "Terroristas, reféns e heróis"
+    },
+    {
+      "id": 40,
+      "group": "Criminosos de elite"
+    },
+    {
+      "id": 41,
+      "group": "Mind-blowing"
+    },
+    {
+      "id": 42,
+      "group": "Filosofia na veia"
+    },
+    {
+      "id": 43,
+      "group": "Você não vai entender de primeira"
+    },
+    {
+      "id": 44,
+      "group": "Reflexão profunda"
+    },
+    {
+      "id": 45,
+      "group": "Psicologia em jogo"
+    },
+    {
+      "id": 46,
+      "group": "Manipulação pura"
+    },
+    {
+      "id": 47,
+      "group": "Entre o real e o imaginário"
+    },
+    {
+      "id": 48,
+      "group": "Verdades inconvenientes"
+    },
+    {
+      "id": 49,
+      "group": "Complexo e necessário"
+    },
+    {
+      "id": 50,
+      "group": "O cérebro pira"
+    },
+    {
+      "id": 51,
+      "group": "Obsessão e loucura"
+    },
+    {
+      "id": 52,
+      "group": "Quem é o vilão aqui?"
+    },
+    {
+      "id": 53,
+      "group": "Muito além da superfície"
+    },
+    {
+      "id": 54,
+      "group": "Desconstruindo tudo"
+    },
+    {
+      "id": 55,
+      "group": "O mundo visto de outro jeito"
+    },
+    {
+      "id": 56,
+      "group": "Marcou época"
+    },
+    {
+      "id": 57,
+      "group": "Nostalgia pura"
+    },
+    {
+      "id": 58,
+      "group": "Virais da cultura pop"
+    },
+    {
+      "id": 59,
+      "group": "Lendas vivas"
+    },
+    {
+      "id": 60,
+      "group": "Ícones da geração"
+    },
+    {
+      "id": 61,
+      "group": "Clássicos imortais"
+    },
+    {
+      "id": 62,
+      "group": "Cult que é cult"
+    },
+    {
+      "id": 63,
+      "group": "O rolê é maratona"
+    },
+    {
+      "id": 64,
+      "group": "Só os fortes entenderão"
+    },
+    {
+      "id": 65,
+      "group": "Roteiros que viraram patrimônio"
+    },
+    {
+      "id": 66,
+      "group": "Referência, sim"
+    },
+    {
+      "id": 67,
+      "group": "Moda, música e atitude"
+    },
+    {
+      "id": 68,
+      "group": "Revolucionaram o cinema"
+    },
+    {
+      "id": 69,
+      "group": "Geração anos 80/90"
+    },
+    {
+      "id": 70,
+      "group": "Uma aula de cultura pop"
+    },
+    {
+      "id": 71,
+      "group": "Roteiros que todo mundo já viu (menos você)"
+    },
+    {
+      "id": 72,
+      "group": "Só hit"
+    },
+    {
+      "id": 73,
+      "group": "Os queridinhos da crítica"
+    },
+    {
+      "id": 74,
+      "group": "Pipoca e sofá"
+    },
+    {
+      "id": 75,
+      "group": "Em alta no Brasil"
+    },
+    {
+      "id": 76,
+      "group": "Made in USA"
+    },
+    {
+      "id": 77,
+      "group": "Europa cinematográfica"
+    },
+    {
+      "id": 78,
+      "group": "Tesouros asiáticos"
+    },
+    {
+      "id": 79,
+      "group": "Made in Japão"
+    },
+    {
+      "id": 80,
+      "group": "Cinema francês com vinho"
+    },
+    {
+      "id": 81,
+      "group": "Vibes latinas"
+    },
+    {
+      "id": 82,
+      "group": "Brasilidades autênticas"
+    },
+    {
+      "id": 83,
+      "group": "África em cena"
+    },
+    {
+      "id": 84,
+      "group": "Produções do mundo árabe"
+    },
+    {
+      "id": 85,
+      "group": "Cultura indígena em foco"
+    },
+    {
+      "id": 86,
+      "group": "Do sertão pro streaming"
+    },
+    {
+      "id": 87,
+      "group": "Os coreanos tão dominando"
+    },
+    {
+      "id": 88,
+      "group": "Bollywood feelings"
+    },
+    {
+      "id": 89,
+      "group": "Orgulho nacional"
+    },
+    {
+      "id": 90,
+      "group": "Diversidade em tela"
+    },
+    {
+      "id": 91,
+      "group": "Universos paralelos"
+    },
+    {
+      "id": 92,
+      "group": "Ficção científica das boas"
+    },
+    {
+      "id": 93,
+      "group": "Viagem no tempo"
+    },
+    {
+      "id": 94,
+      "group": "Mundos distópicos"
+    },
+    {
+      "id": 95,
+      "group": "Realidades que não existem (ainda)"
+    },
+    {
+      "id": 96,
+      "group": "Magia, dragões e profecias"
+    },
+    {
+      "id": 97,
+      "group": "Espada, escudo e honra"
+    },
+    {
+      "id": 98,
+      "group": "Invasões alienígenas"
+    },
+    {
+      "id": 99,
+      "group": "Robôs e consciências"
+    },
+    {
+      "id": 100,
+      "group": "Cyberpunk vibes"
+    },
+    {
+      "id": 101,
+      "group": "Superpoderes em ação"
+    },
+    {
+      "id": 102,
+      "group": "Fantasia dark"
+    },
+    {
+      "id": 103,
+      "group": "O futuro já começou"
+    },
+    {
+      "id": 104,
+      "group": "Clonagem, IA e dilemas éticos"
+    },
+    {
+      "id": 105,
+      "group": "Mitologia repaginada"
+    },
+    {
+      "id": 106,
+      "group": "Dignos de ver e rever"
+    },
+    {
+      "id": 107,
+      "group": "Relacionamentos reais"
+    },
+    {
+      "id": 108,
+      "group": "Amor moderno"
+    },
+    {
+      "id": 109,
+      "group": "Casais que marcaram"
+    },
+    {
+      "id": 110,
+      "group": "Triângulos, tretas e tensão"
+    },
+    {
+      "id": 111,
+      "group": "Histórias de superação"
+    },
+    {
+      "id": 112,
+      "group": "Mães, pais e filhos"
+    },
+    {
+      "id": 113,
+      "group": "Baseado em fatos reais"
+    },
+    {
+      "id": 114,
+      "group": "Quando a vida imita a arte"
+    },
+    {
+      "id": 115,
+      "group": "Histórias de vida marcantes"
+    },
+    {
+      "id": 116,
+      "group": "Família: entre o caos e o amor"
+    },
+    {
+      "id": 117,
+      "group": "Romance nada clichê"
+    },
+    {
+      "id": 118,
+      "group": "Conflitos que todo mundo vive"
+    },
+    {
+      "id": 119,
+      "group": "Coisas que só o tempo cura"
+    },
+    {
+      "id": 120,
+      "group": "A vida como ela é"
+    },
+    {
+      "id": 121,
+      "group": "Pra assistir com os pequenos"
+    },
+    {
+      "id": 122,
+      "group": "Infância em pixels"
+    },
+    {
+      "id": 123,
+      "group": "Clássicos da Sessão da Tarde"
+    },
+    {
+      "id": 124,
+      "group": "Animações que emocionam adultos"
+    },
+    {
+      "id": 125,
+      "group": "Aventuras juvenis"
+    },
+    {
+      "id": 126,
+      "group": "A galera do fundão"
+    },
+    {
+      "id": 127,
+      "group": "Adolescência em crise"
+    },
+    {
+      "id": 128,
+      "group": "Vibe Disney Channel"
+    },
+    {
+      "id": 129,
+      "group": "Magia e amizade"
+    },
+    {
+      "id": 130,
+      "group": "Desenhos que marcam gerações"
+    },
+    {
+      "id": 131,
+      "group": "Reality que vicia"
+    },
+    {
+      "id": 132,
+      "group": "Bastidores da fama"
+    },
+    {
+      "id": 133,
+      "group": "A vida como espetáculo"
+    },
+    {
+      "id": 134,
+      "group": "Documentários reveladores"
+    },
+    {
+      "id": 135,
+      "group": "Séries que fazem história"
+    },
+    {
+      "id": 136,
+      "group": "Verdades que chocam"
+    },
+    {
+      "id": 137,
+      "group": "Câmeras ligadas, drama rolando"
+    },
+    {
+      "id": 138,
+      "group": "Retratos do mundo real"
+    },
+    {
+      "id": 139,
+      "group": "Séries que todo mundo comenta"
+    },
+    {
+      "id": 140,
+      "group": "Maratonáveis até o fim"
+    },
+    {
+      "id": 141,
+      "group": "Episódios curtinhos"
+    },
+    {
+      "id": 142,
+      "group": "Formato fora da curva"
+    },
+    {
+      "id": 143,
+      "group": "Curtas que valem a pena"
+    },
+    {
+      "id": 144,
+      "group": "Roteiros com menos de 90 min"
+    },
+    {
+      "id": 145,
+      "group": "Antologia e pílulas narrativas"
+    }
+  ]
+}

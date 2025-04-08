@@ -1,13 +1,18 @@
-import { Component, OnInit, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef, HostListener, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy, ChangeDetectorRef, HostListener, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, IonContent } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { Channel } from '../interfaces/channel.interface';
 import { ChannelService } from '../services/channel.service';
 import Hls from 'hls.js';
 import { inject } from "@vercel/analytics";
+import { injectSpeedInsights } from '@vercel/speed-insights';
 import { ChannelGroup } from '../interfaces/channel-group.interface';
 import { OptimizeImageDirective } from '../directives/optimize-image.directive';
+import videojs from "video.js";
+import { CategoriesService } from '../services/categories.service';
+videojs.options.language = 'pt-BR';
+
 
 @Component({
   selector: 'app-home',
@@ -23,9 +28,14 @@ import { OptimizeImageDirective } from '../directives/optimize-image.directive';
 })
 
 
-export class HomePage implements OnInit, OnDestroy {
-  @ViewChild('player') playerRef!: ElementRef;
+export class HomePage implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('videoPlayer') playerRef!: ElementRef;
+  @ViewChild('playerContainer') playerContainer!: ElementRef;
   @ViewChildren('scrollRow') scrollRows!: QueryList<ElementRef>;
+  @ViewChild(IonContent) content!: IonContent;
+  @ViewChild('mainToolbar') toolbar!: ElementRef;
+  private lastScrollPosition: number = 0;
+  private scrollThreshold: number = 100; // Ajuste este valor conforme necessário
   private scrollPositions = new Map<string, number>();
 
   isLoading = true;
@@ -62,9 +72,19 @@ export class HomePage implements OnInit, OnDestroy {
 
   groupedContent: ChannelGroup[] = [];
 
+  private readonly MOVIES_PER_PAGE = 300;
+  private currentPage = 1;
+  public isLoadingPage = false;
+  private loadedGroups = new Set<number>();
+  private intersectionObserver?: IntersectionObserver;
+
+  // Adicione esta propriedade
+  private readonly PRELOAD_THRESHOLD = 2; // Número de carrosséis antes do fim para iniciar o preload
+
   constructor(
     private channelService: ChannelService,
-    private changeDetectorRef: ChangeDetectorRef
+    private categoriesService: CategoriesService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   
@@ -93,15 +113,27 @@ export class HomePage implements OnInit, OnDestroy {
       console.error('Erro detalhado:', error);
     } finally {
       this.isLoading = false;
-      this.changeDetectorRef.detectChanges();
+      this.cdr.detectChanges();
     }
   }
 
   ngOnDestroy() {
-    // Garante que o HLS seja destruído ao sair da página
+    if (this.player) {
+      this.player.dispose();
+    }
     if (this.hls) {
       this.hls.destroy();
     }
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+    }
+  }
+
+  ngAfterViewInit() {
+    if (!this.playerRef) {
+      console.error('Elemento do player não foi inicializado.');
+    }
+    this.setupScrollListener();
   }
 
   onCategoryChange(event: any) {
@@ -109,7 +141,7 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   // Adicione um método para limpar o cache ao mudar de categoria
-  filterChannels(category: string) {
+  async filterChannels(category: string) {
     console.log('Filtrando por categoria:', category);
     this.selectedCategory = category;
     
@@ -128,8 +160,26 @@ export class HomePage implements OnInit, OnDestroy {
     );
 
     console.log(`Filtrados ${this.filteredChannels.length} canais`);
-    this.updateGroupedContent(); // Atualiza os grupos uma vez
-    this.changeDetectorRef.detectChanges();
+
+    // Lógica específica para filmes
+    if (category === 'movies') {
+      this.loadedGroups.clear();
+      this.groupedContent = await this.createMovieGroups(this.filteredChannels);
+      this.setupIntersectionObserver();
+      
+      // Observe o último grupo após um pequeno delay
+      setTimeout(() => {
+        const groupElements = document.querySelectorAll('.group-wrapper');
+        if (groupElements.length > 0) {
+          const lastGroup = groupElements[groupElements.length - 1];
+          this.intersectionObserver?.observe(lastGroup);
+        }
+      }, 100);
+    } else {
+      this.updateGroupedContent();
+    }
+
+    this.cdr.detectChanges();
   }
 
   private matchesCategory(channel: Channel, category: string): boolean {
@@ -205,7 +255,7 @@ export class HomePage implements OnInit, OnDestroy {
   
     const groupNames = Array.from(new Set(this.filteredChannels.map(ch => ch.group || 'Outros')));
   
-    const groups: ChannelGroup[] = groupNames.map(groupName => {
+    const groups: ChannelGroup[] = groupNames.map((groupName, index) => {
       let items = this.groupItems.get(groupName);
       if (!items) {
         // Se ainda não tiver itens para o grupo, pega os itens filtrados e limita pela carga inicial
@@ -218,7 +268,8 @@ export class HomePage implements OnInit, OnDestroy {
         name: this.formatGroupName(groupName),
         items: items,
         hasMore: items.length < total,
-        totalItems: total
+        totalItems: total,
+        groupIndex: index // Adicionando o groupIndex requerido
       };
     });
   
@@ -240,7 +291,7 @@ export class HomePage implements OnInit, OnDestroy {
     const groupNames = Array.from(new Set(this.filteredChannels.map(ch => ch.group || 'Outros')));
   
     // Para cada grupo, use o groupItems se já existir ou inicialize com INITIAL_LOAD
-    const groups: ChannelGroup[] = groupNames.map(groupName => {
+    const groups: ChannelGroup[] = groupNames.map((groupName, index) => {
       let items = this.groupItems.get(groupName);
       if (!items) {
         // Se ainda não tiver itens para o grupo, pega os itens filtrados e limita pela carga inicial
@@ -253,7 +304,8 @@ export class HomePage implements OnInit, OnDestroy {
         name: this.formatGroupName(groupName),
         items: items,
         hasMore: items.length < total,
-        totalItems: total
+        totalItems: total,
+        groupIndex: index // Adicionando o groupIndex requerido
       };
     });
   
@@ -280,101 +332,82 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   playVideo(channel: Channel) {
-    if (!this.playerRef?.nativeElement) return;
+    console.log('Iniciando reprodução do canal:', channel.name);
     
-    const video = this.playerRef.nativeElement;
-    this.currentChannel = channel;
     this.isPlayerVisible = true;
-    console.log(this.isPlayerVisible);
+    this.currentChannel = channel;
     
-    if (this.hls) {
-      this.hls.destroy();
-      this.hls = undefined;
-    }
-    
-    // Verifica se é conteúdo ao vivo baseado na categoria e URL
-    const isLiveContent = this.selectedCategory === 'live' || 
-                         this.selectedCategory === 'sports' ||
-                         channel.url.includes('.m3u8');
-    
-    if (isLiveContent) {
-      console.log('Iniciando reprodução de conteúdo ao vivo:', channel.name);
-      console.log('URL do stream:', channel.url);
-      
-      if (Hls.isSupported()) {
-        this.hls = new Hls({
-          enableWorker: true,
-          lowLatencyMode: true,
-          backBufferLength: 90,
-          maxBufferLength: 30,
-          maxMaxBufferLength: 600,
-          maxBufferSize: 60 * 1000 * 1000
-        });
-        
-        this.hls.attachMedia(video);
-        this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-          console.log('HLS Media Attached');
-          this.hls?.loadSource(channel.url);
-        });
-        
-        this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          console.log('HLS Manifest Parsed');
-          video.play()
-            .then(() => this.requestFullscreen(video))
-            .catch((error: any) => {
-              console.error('Erro ao iniciar playback:', error);
-              this.handlePlaybackError(error);
-            });
-        });
-        
-        this.hls.on(Hls.Events.ERROR, (event, data) => {
-          console.error('Erro HLS:', data);
-          if (data.fatal) {
-            switch (data.type) {
-              case Hls.ErrorTypes.NETWORK_ERROR:
-                console.log('Tentando recuperar erro de rede...');
-                this.hls?.startLoad();
-                break;
-              case Hls.ErrorTypes.MEDIA_ERROR:
-                console.log('Tentando recuperar erro de mídia...');
-                this.hls?.recoverMediaError();
-                break;
-              default:
-                console.error('Erro fatal:', data);
-                this.closePlayer();
-                break;
-            }
-          }
-        });
-      } else {
-        // Fallback para navegadores que suportam HLS nativamente (Safari)
-        video.src = channel.url;
-        video.load();
-        video.play()
-          .then(() => this.requestFullscreen(video))
-          .catch((error: Error) => {
-            console.error('Erro ao reproduzir em modo nativo:', error);
-            this.handlePlaybackError(error);
-          });
+    // Forçar detecção de mudanças
+    this.cdr.detectChanges();
+  
+    // Criar novo elemento de vídeo
+    setTimeout(() => {
+      if (!this.playerContainer?.nativeElement) {
+        console.error('Container do player não encontrado.');
+        return;
       }
-    } else {
-      // Conteúdos VOD
-      video.src = channel.url;
-      video.load();
-      video.play()
-        .then(() => this.requestFullscreen(video))
-        .catch((error: Error) => {
-          console.error('Erro ao reproduzir VOD:', error);
-          this.handlePlaybackError(error);
+  
+      // Limpar o container
+      this.playerContainer.nativeElement.innerHTML = '';
+  
+      // Criar novo elemento de vídeo
+      const videoElement = document.createElement('video');
+      videoElement.id = 'videoPlayer';
+      videoElement.className = 'video-js vjs-theme-forest';
+      videoElement.controls = true;
+      videoElement.preload = 'auto';
+      videoElement.setAttribute('playsinline', '');
+      videoElement.setAttribute('webkit-playsinline', '');
+  
+      // Adicionar o elemento ao container
+      this.playerContainer.nativeElement.appendChild(videoElement);
+  
+      // Se já existe um player, destrua-o
+      if (this.player) {
+        this.player.dispose();
+        this.player = null;
+      }
+  
+      // Inicializar novo player
+      this.player = videojs(videoElement, {
+        autoplay: true,
+        controls: true,
+    
+        skipButtons: {
+          forward: 10,
+        backward: 10
+      },
+        preload: 'auto',
+        fluid: true,
+        preferFullWindow: true,
+        language:'pt-br',
+        sources: [{
+          src: channel.url,
+          type: channel.url.endsWith('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'
+        }]
+      });
+  
+      // Adicionar listeners de eventos
+      this.player.on('error', () => {
+        console.error('Erro ao reproduzir o vídeo:', this.player.error());
+        this.handlePlaybackError(this.player.error());
+      });
+  
+      // Adicionar listener para ready
+      this.player.ready(() => {
+        console.log('Player pronto');
+        this.player.play().catch((error: any) => {
+          console.error('Erro ao iniciar playback:', error);
         });
-    }
-}
+      });
+    }, 100);
+  }
 
-private handlePlaybackError(error: Error | DOMException): void {
-  console.error('Erro de reprodução:', error);
-  // TODO: Implementar lógica de tratamento de erro
-  // Por exemplo: mostrar toast/alert para o usuário
-}
+  private handlePlaybackError(error: Error | DOMException): void {
+    console.error('Erro de reprodução:', error);
+    // TODO: Implementar lógica de tratamento de erro
+    // Por exemplo: mostrar toast/alert para o usuário
+  }
 
   private requestFullscreen(element: HTMLElement) {
     try {
@@ -410,29 +443,28 @@ private handlePlaybackError(error: Error | DOMException): void {
   }
 
   closePlayer() {
-    if (this.playerRef?.nativeElement) {
-      const video = this.playerRef.nativeElement;
-      video.pause();
-      video.removeAttribute('src');
-      video.load();
+    console.log('Fechando o player...');
+
+    if (this.player) {
+      // Parar a reprodução
+      this.player.pause();
       
-      if (this.hls) {
-        this.hls.destroy();
-        this.hls = undefined;
+      // Dispose do player
+      this.player.dispose();
+      this.player = null;
+
+      // Limpar o container
+      if (this.playerContainer?.nativeElement) {
+        this.playerContainer.nativeElement.innerHTML = '';
       }
-      
-      // Sai do modo tela cheia se necessário
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(err => 
-          console.error('Erro ao sair da tela cheia:', err)
-        );
-      }
-      
-      this.isPlayerVisible = false;
-      console.log(this.isPlayerVisible);
-      this.currentChannel = undefined;
-      this.changeDetectorRef.detectChanges(); // Força atualização da view
     }
+
+    // Ocultar o container do player
+    this.isPlayerVisible = false;
+    this.currentChannel = undefined;
+
+    // Forçar detecção de mudanças
+    this.cdr.detectChanges();
   }
 
   searchChannels(event: any) {
@@ -479,7 +511,7 @@ private handlePlaybackError(error: Error | DOMException): void {
       console.error('Erro ao carregar mais itens:', error);
     } finally {
       this.isLoadingMore = false;
-      this.changeDetectorRef.detectChanges();
+      this.cdr.detectChanges();
       // Restaura a posição de scroll, se disponível
       if (container && this.scrollPositions.has(groupName)) {
         container.scrollLeft = this.scrollPositions.get(groupName)!;
@@ -506,4 +538,150 @@ private handlePlaybackError(error: Error | DOMException): void {
   trackGroupBy(index: number, group: ChannelGroup): string {
     return group.name;
   }
-}inject();
+
+  private setupScrollListener() {
+    this.content.scrollEvents = true;
+    
+    const content = document.querySelector('ion-content');
+    const toolbar = document.querySelector('ion-toolbar');
+    const mainContent = document.querySelector('.content-wrapper');
+    
+    this.content.ionScroll.subscribe((event: any) => {
+      const scrollTop = event.detail.scrollTop;
+      
+      if (scrollTop > this.scrollThreshold && this.lastScrollPosition <= this.scrollThreshold) {
+        // Rolando para baixo e passou do threshold
+        toolbar?.classList.add('scrolled');
+        mainContent?.classList.add('scrolled');
+      } else if (scrollTop <= this.scrollThreshold && this.lastScrollPosition > this.scrollThreshold) {
+        // Rolando para cima e voltou do threshold
+        toolbar?.classList.remove('scrolled');
+        mainContent?.classList.remove('scrolled');
+      }
+      
+      this.lastScrollPosition = scrollTop;
+    });
+  }
+
+  private async createMovieGroups(movies: Channel[]): Promise<ChannelGroup[]> {
+    const totalGroups = Math.ceil(movies.length / this.MOVIES_PER_PAGE);
+    const initialGroups: ChannelGroup[] = [];
+    
+    const groupsToLoad = Math.min(2, totalGroups);
+    
+    // Carregar todas as categorias primeiro
+    const categories = await this.categoriesService.getCategories().toPromise();
+    
+    for (let i = 0; i < groupsToLoad; i++) {
+      const start = i * this.MOVIES_PER_PAGE;
+      const end = start + this.MOVIES_PER_PAGE;
+      const groupItems = movies.slice(start, end);
+      
+      const categoryName = categories?.find(c => c.id === i + 1)?.group || `Filmes ${i + 1}`;
+      
+      initialGroups.push({
+        name: `Filmes ${categoryName}`,
+        items: groupItems,
+        hasMore: false,
+        totalItems: groupItems.length,
+        groupIndex: i
+      });
+      
+      this.loadedGroups.add(i);
+    }
+    
+    return initialGroups;
+  }
+
+  private async loadMoreGroups(count: number = 2) {
+    if (this.isLoadingPage || !this.filteredChannels) return;
+
+    try {
+      this.isLoadingPage = true;
+      const totalGroups = Math.ceil(this.filteredChannels.length / this.MOVIES_PER_PAGE);
+      
+      if (this.loadedGroups.size >= totalGroups) return;
+
+      const categories = await this.categoriesService.getCategories().toPromise();
+      const newGroups: ChannelGroup[] = [];
+      
+      for (let i = 0; i < count; i++) {
+        const nextGroupIndex = this.loadedGroups.size;
+        if (nextGroupIndex >= totalGroups) break;
+
+        const start = nextGroupIndex * this.MOVIES_PER_PAGE;
+        const end = start + this.MOVIES_PER_PAGE;
+        const groupItems = this.filteredChannels.slice(start, end);
+
+        const categoryName = categories?.find(c => c.id === nextGroupIndex + 1)?.group || 
+                           `Filmes ${nextGroupIndex + 1}`;
+
+        newGroups.push({
+          name: `Filmes ${categoryName}`,
+          items: groupItems,
+          hasMore: false,
+          totalItems: groupItems.length,
+          groupIndex: nextGroupIndex
+        });
+        
+        this.loadedGroups.add(nextGroupIndex);
+      }
+
+      this.groupedContent = [...this.groupedContent, ...newGroups];
+      
+    } finally {
+      this.isLoadingPage = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  private setupIntersectionObserver() {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+    }
+
+    this.intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const groupElement = entry.target as HTMLElement;
+            const groupIndex = parseInt(groupElement.getAttribute('data-group-index') || '0');
+            
+            // Se estamos próximos do fim dos grupos carregados
+            if (groupIndex >= this.loadedGroups.size - this.PRELOAD_THRESHOLD) {
+              this.loadMoreGroups(2); // Carrega mais 2 grupos
+            }
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '50px',
+        threshold: 0.1
+      }
+    );
+
+    // Observa todos os grupos
+    this.observeGroups();
+  }
+
+  // Adicione este novo método
+  private observeGroups() {
+    setTimeout(() => {
+      const groupElements = document.querySelectorAll('.group-wrapper');
+      groupElements.forEach(element => {
+        this.intersectionObserver?.observe(element);
+      });
+    }, 100);
+  }
+
+  // Adicione um evento de mouse enter nos carrosséis
+  onGroupHover(event: MouseEvent, groupIndex: number) {
+    if (typeof groupIndex === 'number' && groupIndex >= this.loadedGroups.size - this.PRELOAD_THRESHOLD) {
+      this.loadMoreGroups(2);
+    }
+  }
+}
+//telemetria do servidor
+inject();
+injectSpeedInsights();

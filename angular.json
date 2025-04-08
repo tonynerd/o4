@@ -36,7 +36,14 @@
                 "output": "/workers"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": ["src/global.scss", "src/theme/variables.scss", 
+            "node_modules/video.js/dist/video-js.css", 
+          {
+                "input": "node_modules/@videojs/themes/dist/forest/index.css",
+                "bundleName": "videojs-theme-forest",
+                "inject": true
+              }
+            ],
             "scripts": [],
             "webWorkerTsConfig": "tsconfig.worker.json"
           },
@@ -117,7 +124,8 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": ["src/global.scss", "src/theme/variables.scss"
+          ],
             "scripts": []
           },
           "configurations": {

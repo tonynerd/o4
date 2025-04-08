@@ -5,4 +5,5 @@ export interface ChannelGroup {
   items: Channel[];
   hasMore: boolean;
   totalItems: number;
+  groupIndex: number; // Removido o opcional (?)
 }

@@ -1,10 +1,10 @@
 // For information on how to create your own theme, please see:
 // http://ionicframework.com/docs/theming/
-
 :root {
   --ion-background-color: #00040c;
   --ion-background-color-rgb: 0, 4, 12;
-  
+  --ion-backdrop-filter: blur(10px);
+  --ion-background-translucent: rgba(0, 5, 15, 0.75);
   --ion-text-color: #ffffff;
   --ion-text-color-rgb: 255, 255, 255;
   
