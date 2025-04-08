@@ -7,8 +7,8 @@ import { Directive, ElementRef, Input, OnInit } from '@angular/core';
 export class OptimizeImageDirective implements OnInit {
   @Input() imageUrl!: string;
   private retryCount = 0;
-  private maxRetries = 5;
-  private retryDelay = 20000;
+  private maxRetries = 2;
+  private retryDelay = 2000;
 
   constructor(private el: ElementRef<HTMLImageElement>) {}
 
